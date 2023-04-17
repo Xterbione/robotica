@@ -1,3 +1,4 @@
+//darkmode toggle
 function toggle(){
     const element = document.getElementById("body");
     if(element.getAttribute('data-bs-theme') == "dark"){

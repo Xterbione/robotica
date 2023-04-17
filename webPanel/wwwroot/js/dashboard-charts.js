@@ -1,3 +1,4 @@
+//to add more gauges, simply coppy all the relevant code and change the name of the variables to something else
 const ctx1 = document.getElementById("myChart");
 
 new Chart(ctx1, {
