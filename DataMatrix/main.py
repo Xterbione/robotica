@@ -27,7 +27,7 @@ def op2 ():
     while(True):
         ret, frame = cap.read()
 
-        if cv2.waitKey(1) & 0xFF == ord('f'):
+        if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  #colour filter?
 
@@ -37,21 +37,26 @@ def op2 ():
 
             if msg:
                 print(msg)
-                break
+                #break
+                continue
 
-        if cv2.waitKey(1) & 0xFF == ord('g'):
+        if cv2.waitKey(1) & 0xFF == ord('g'):   #draws contours into frame
 
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  #colour filter?
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-            cv2.imshow('frame', gray)
+            #cv2.imshow('frame', gray)
 
             for c in contours:
-                cv2.drawContours(gray, c, -1, (255, 105, 180), 3)
+                cv2.drawContours(frame, [c], -1, (255, 105, 180), 3)
+            cv2.imshow('frame', frame)
+            continue
 
-        cv2.imshow('frame', frame)  # sets type of display and content of display
+        else:
+            cv2.imshow('frame', frame)  # sets type of display and content of display
+
         if cv2.waitKey(1) & 0xFF == ord('q'):           #waits till 'q' is pressed
             break                                       #breaks out of while loop
     cap.release()
