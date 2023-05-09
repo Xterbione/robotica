@@ -5,7 +5,8 @@ from pylibdmtx import pylibdmtx
 #import pyrealsense2    #doesn't work
 
 def op1 ():
-    img = cv2.imread('Datamatrix_3.jpg', cv2.IMREAD_UNCHANGED)    #load img
+
+    img = 1#cv2.imread('C:\Users\Public\Pictures\Datamatrix_3.jpg', cv2.IMREAD_UNCHANGED)    #load img    #dont work
 
     #h, w, c = img.shape
 
@@ -29,9 +30,9 @@ def op2 ():
         ret, frame = cap.read()
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        #contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        if False: cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
+        #if True: cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
 
         if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
             # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
@@ -42,30 +43,54 @@ def op2 ():
 
             if msg:
                 print(msg)
-                break
-                #continue
+                for m in msg:
+                    print(m[0])
+            break
+            #continue
 
 
-        elif cv2.waitKey(1) & 0xFF == ord('g'):   #draws contours for anything the program identifies as 'box' (W.I.P.)
+        elif cv2.waitKey(1) & 0xFF == ord('g') or True:   #draws contours for anything the program identifies as 'box' (W.I.P.)
             # https://www.tutorialspoint.com/how-to-detect-a-rectangle-and-square-in-an-image-using-opencv-python
-            blur = cv2.GaussianBlur(gray, (25, 25), 0)
-            contrast = 5 * blur + 200
+            blur = cv2.GaussianBlur(gray, (1, 1), 0)
+            blur2 = cv2.boxFilter(gray, -1, (7, 7))
 
-            ret, thresh = cv2.threshold(contrast, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+            #Masking
+            hls = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
+            #lower = np.array([0, 0, 155])
+            #upper = np.array([255, 100, 255])
+            Lchannel = hls[:, :, 1]
+
+            mask = cv2.inRange(Lchannel, 175, 255)
+            res = cv2.bitwise_and(frame, frame, mask = mask)
+
+            #Contour detection
+            #contrast = 3 * blur2 + 175
+
+            ret, thresh = cv2.threshold(blur2, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-            for c in contours:
+            cv2.drawContours(res, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
 
-                area = cv2.contourArea(c)
-                perimeter = cv2.arcLength(c, True)
-                approx = cv2.approxPolyDP(c, 0.01 * perimeter, True)
+            for c in range(len(contours)):
+
+                area = cv2.contourArea(contours[c])
+                perimeter = cv2.arcLength(contours[c], True)
+                approx = cv2.approxPolyDP(contours[c], 0.01 * perimeter, True)
+
+                #childeren = hierarchy[c][2]
+
+                #print(childeren)
 
                 #if perimeter > 0: vormfactor = (4 * math.pi * area) / perimeter ** 2
                 #if area > 500 and area < 1000 and vormfactor > 0.3:
-                if len(approx) == 4 and area > 100:
-                    cv2.drawContours(contrast, [c], -1, (255, 105, 180), 3)
+                if (len(approx) == 4 and area > 500):# or childeren > 0:
+                    cv2.drawContours(res, [contours[c]], -1, (255, 105, 180), 3)
+                    #print(area)
 
-            cv2.imshow('frame', contrast)
+            # Edge detection
+            edges = cv2.Canny(blur, 100, 200)
+
+            cv2.imshow('frame', edges)
             #continue
 
         else:
