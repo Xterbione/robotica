@@ -3,6 +3,8 @@ import cv2
 import math
 from pylibdmtx import pylibdmtx
 #import pyrealsense2    #doesn't work
+#from 'C:\Users\marte\appdata\local\packages\pythonsoftwarefoundation.python.3.10_qbz5n2kfra8p0\localcache\local-packages\python310\site-packages\pyrealsense2' import __
+# Project Python version is 3.11, last supported Python version vor pyrealsense2 is 3.10
 
 def op1 ():
 
@@ -45,14 +47,14 @@ def op2 ():
                 print(msg)
                 for m in msg:
                     print(m[0])
-            break
+                break
             #continue
 
 
         elif cv2.waitKey(1) & 0xFF == ord('g') or True:   #draws contours for anything the program identifies as 'box' (W.I.P.)
             # https://www.tutorialspoint.com/how-to-detect-a-rectangle-and-square-in-an-image-using-opencv-python
-            blur = cv2.GaussianBlur(gray, (1, 1), 0)
-            blur2 = cv2.boxFilter(gray, -1, (7, 7))
+            #blur = cv2.GaussianBlur(gray, (7, 7), 0)
+            #blur2 = cv2.boxFilter(gray, -1, (9, 9))
 
             #Masking
             hls = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
@@ -60,16 +62,22 @@ def op2 ():
             #upper = np.array([255, 100, 255])
             Lchannel = hls[:, :, 1]
 
-            mask = cv2.inRange(Lchannel, 175, 255)
-            res = cv2.bitwise_and(frame, frame, mask = mask)
+            mask = cv2.inRange(Lchannel, 180, 255)
+            res = cv2.bitwise_and(frame, frame, mask=mask)
+
+            mask_blur = cv2.boxFilter(mask, -1, (5, 5))
+
+            res_gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+            res_blur = cv2.boxFilter(res_gray, -1, (9, 9))
 
             #Contour detection
             #contrast = 3 * blur2 + 175
 
-            ret, thresh = cv2.threshold(blur2, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+            ret, thresh = cv2.threshold(mask_blur, 180, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+            # werkt alleen met grayscaled img
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-            cv2.drawContours(res, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
+            cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
 
             for c in range(len(contours)):
 
@@ -83,14 +91,18 @@ def op2 ():
 
                 #if perimeter > 0: vormfactor = (4 * math.pi * area) / perimeter ** 2
                 #if area > 500 and area < 1000 and vormfactor > 0.3:
-                if (len(approx) == 4 and area > 500):# or childeren > 0:
-                    cv2.drawContours(res, [contours[c]], -1, (255, 105, 180), 3)
-                    #print(area)
+                if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 300000):# or childeren > 0:
+                    cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
+                    print(area)
 
             # Edge detection
-            edges = cv2.Canny(blur, 100, 200)
+            edges = cv2.Canny(mask_blur, 100, 200, 90)
 
-            cv2.imshow('frame', edges)
+            #cv2.imshow('blur', blur2)
+            cv2.imshow('edge', edges)
+            cv2.imshow('res', res)
+            cv2.imshow('mask', mask_blur)
+            cv2.imshow('frame', frame)
             #continue
 
         else:
