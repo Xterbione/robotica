@@ -2,9 +2,7 @@ import numpy as np
 import cv2
 import math
 from pylibdmtx import pylibdmtx
-#import pyrealsense2    #doesn't work
-#from 'C:\Users\marte\appdata\local\packages\pythonsoftwarefoundation.python.3.10_qbz5n2kfra8p0\localcache\local-packages\python310\site-packages\pyrealsense2' import __
-# Project Python version is 3.11, last supported Python version vor pyrealsense2 is 3.10
+import pyrealsense2 as rs    #doesn't work
 
 def op1 ():
 
@@ -26,10 +24,31 @@ def op1 ():
     cv2.destroyAllWindows()         #closes window
 
 def op2 ():
-    cap = cv2.VideoCapture(0)
+    realsense = False
+    if realsense:
+        cap = cv2.VideoCapture(2)
+        pipe = rs.pipeline()
+        config = rs.config()
+
+        config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
+
+        pipe.start(config)
+
+    else: cap = cv2.VideoCapture(0)
 
     while(True):
         ret, frame = cap.read()
+        if realsense:
+            frame2 = pipe.wait_for_frames()
+            depth = frame2.get_depth_frame()
+            #color = frame2.get_color_frame()
+
+            depth2 = np.asanyarray(depth.get_data())
+            #if color: color2 = np.asanyarray(color.get_data())
+
+            depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth2, alpha=0.03), cv2.COLORMAP_JET)
+            #color_colormap_dim = color.shape
+
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
         #contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -39,7 +58,7 @@ def op2 ():
         if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
             # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
 
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
 
             msg = pylibdmtx.decode(thresh)
 
@@ -58,8 +77,6 @@ def op2 ():
 
             #Masking
             hls = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
-            #lower = np.array([0, 0, 155])
-            #upper = np.array([255, 100, 255])
             Lchannel = hls[:, :, 1]
 
             mask = cv2.inRange(Lchannel, 180, 255)
@@ -91,9 +108,19 @@ def op2 ():
 
                 #if perimeter > 0: vormfactor = (4 * math.pi * area) / perimeter ** 2
                 #if area > 500 and area < 1000 and vormfactor > 0.3:
-                if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 300000):# or childeren > 0:
+                #con = contours[c]
+
+                if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000):# or childeren > 0:
                     cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
-                    print(area)
+
+                    x, y, w, h = cv2.boundingRect(contours[c])
+
+                    cropped = frame[y:h+y, x:w+x]   # (W.I.P.)
+                    print(x, w, y, h)
+                    #print(x:w, y:h)
+                    cv2.imshow('cropped', cropped)
+
+                    cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
 
             # Edge detection
             edges = cv2.Canny(mask_blur, 100, 200, 90)
@@ -103,6 +130,8 @@ def op2 ():
             cv2.imshow('res', res)
             cv2.imshow('mask', mask_blur)
             cv2.imshow('frame', frame)
+            if realsense: cv2.imshow('realsense', depth_colormap)
+            #if color: cv2.imshow('realsense2', color2)
             #continue
 
         else:
