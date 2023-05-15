@@ -1,0 +1,5 @@
+{
+    "API_URL": "http://192.168.74.130:5000",
+    "ENABLE_FEATURE_X": true,
+    "LOG_LEVEL": "debug"
+  }
