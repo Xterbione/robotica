@@ -96,8 +96,6 @@ def op2 ():
                         file = open('file.txt', 'w')
                         file.write(string)
                         file.close()
-                        #continue
-                        #break
                 # for m in msg:
                 #     #print(m[0])
                 #     data = m[0].decode()  # str.(m[0], 'utf_8')
@@ -153,7 +151,6 @@ def op2 ():
             # werkt alleen met grayscaled img
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-            cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
             #endregion
 
             for c in range(len(contours)):
@@ -170,13 +167,14 @@ def op2 ():
                 #if area > 500 and area < 1000 and vormfactor > 0.3:
                 #con = contours[c]
 
+                cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
                 if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000):# or childeren > 0:
                     cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
 
                     x, y, w, h = cv2.boundingRect(contours[c])
 
-                    cropped = frame[y:h+y, x:w+x]   # (W.I.P.)
-                    print(x, w, y, h)
+                    cropped = frame[y:h+y, x:w+x]
+                    #print(x, w, y, h)
                     #print(x:w, y:h)
                     cv2.imshow('cropped', cropped)
 
