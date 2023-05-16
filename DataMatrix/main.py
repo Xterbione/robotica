@@ -88,10 +88,11 @@ def op2 ():
                     for m in msg:
                         print(m)
                         print(m[0])     #data in bytes
-                        json = GS1.setJson(m[0])
-                        file = open(r"C:\Users\Public\file.txt", 'a')
-                        file.write(json)
-                        file.close()
+                        GS1.setJson(m[0])
+
+                file = open(r"C:\Users\Public\file.txt", 'a')
+                file.write(GS1)
+                file.close()
             else: print('Nothing detected')
 
 

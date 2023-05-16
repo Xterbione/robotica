@@ -4,18 +4,23 @@ namespace testAPI.Models
 {
     public class GS1Model
     {
-        //public List<string> d { get; set; }
+        public string GS1 { get; set; }
 
-        public static List<string> getJson()
+        //public void setGS1(string setter){GS1 = setter;}
+
+        public static List<GS1Model> getJson()
         {
-            List<string> bla = new List<string>();// { "Something" };
-            var temp = JsonConvert.DeserializeObject<string>(File.ReadAllText(@"C:\Users\Public\file.txt"));
+            List<GS1Model> bla = new List<GS1Model>();// { "Something" };
+            var temp = JsonConvert.DeserializeObject<List<GS1Model>>(File.ReadAllText(@"C:\Users\Public\file.txt"));
 
-            foreach (var x in temp)
+            /*foreach (var x in temp)
             {
-                string y = Convert.ToString(x);
-                bla.Append(y);
-            }
+                GS1Model z = new GS1Model();
+                z.GS1 = Convert.ToString(x);
+                //string y = Convert.ToString(x);
+                //bla.Append(y);
+                bla.Add(z);
+            }*/
 
             return bla;
         }
