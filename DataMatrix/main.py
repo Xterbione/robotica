@@ -64,7 +64,7 @@ def op2 ():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
-        if False:
+        if True:
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
 
@@ -75,23 +75,16 @@ def op2 ():
 
             msg = pylibdmtx.decode(thresh)  # kost veel computer power
 
-            #string = ''
-            #string_count = 0
-
             if msg:
-                print(msg)
-                f = open(r"C:\Users\Public\file.txt", 'w')
-                f.write('')
-                f.close()
+                GS1.clearGS1()
+                for m in msg:
+                    #print(m)
+                    print(m[0])     #data in bytes
+                    #temp.GS1 = m[0].decode()
+                    GS1.setGS1(m[0])
 
-                if True: #len(msg) > 1 or True:
-                    for m in msg:
-                        print(m)
-                        print(m[0])     #data in bytes
-                        GS1.setJson(m[0])
-
-                file = open(r"C:\Users\Public\file.txt", 'a')
-                file.write(GS1)
+                file = open(r"C:\Users\Public\file.txt", "w")
+                file.write(GS1.setJson())
                 file.close()
             else: print('Nothing detected')
 
