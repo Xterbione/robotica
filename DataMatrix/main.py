@@ -2,7 +2,10 @@ import numpy as np
 import cv2
 import math
 from pylibdmtx import pylibdmtx
-import pyrealsense2 as rs    #doesn't work
+import pyrealsense2 as rs
+
+import GS1
+import json
 
 def op1 ():
 
@@ -28,7 +31,7 @@ def op2 ():
         #data = open('file.txt', 'x')
     #except Exception as e:
         #print(e)
-    last_string = ''
+    #last_string = ''
     #data = open('file.txt', 'w+')
     #data.close()
 
@@ -46,6 +49,7 @@ def op2 ():
 
     while(True):
         ret, frame = cap.read()
+
         if realsense:
             frame2 = pipe.wait_for_frames()
             depth = frame2.get_depth_frame()
@@ -59,9 +63,10 @@ def op2 ():
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-        #contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        #if True: cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
+        if False:
+            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
 
         if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
             # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
@@ -70,59 +75,23 @@ def op2 ():
 
             msg = pylibdmtx.decode(thresh)  # kost veel computer power
 
-            string = ''
-            string_count = 0
+            #string = ''
+            #string_count = 0
 
             if msg:
-                if len(msg) == 1:
-                    data = msg[0][0].decode()  # str.(m[0], 'utf_8')
-                    if last_string != data:
-                        print('New data: ', data)
-                        file = open('file.txt', 'w')
-                        file.write("\n" + data)
-                        file.close()
-                        last_string = data
+                print(msg)
+                f = open(r"C:\Users\Public\file.txt", 'w')
+                f.write('')
+                f.close()
 
-                elif len(msg) > 1:
+                if True: #len(msg) > 1 or True:
                     for m in msg:
-                        data = m[0].decode()  # str.(m[0], 'utf_8')
-                        string = string + "\n" + data
-                        string_count = string_count + 1
-
-                    print(len(msg), string_count)
-
-                    if string_count == len(msg):
-                        print(string)
-                        file = open('file.txt', 'w')
-                        file.write(string)
+                        print(m)
+                        print(m[0])     #data in bytes
+                        json = GS1.setJson(m[0])
+                        file = open(r"C:\Users\Public\file.txt", 'a')
+                        file.write(json)
                         file.close()
-                # for m in msg:
-                #     #print(m[0])
-                #     data = m[0].decode()  # str.(m[0], 'utf_8')
-                #     if len(msg) == 1:
-                #         if last_string != data:
-                #             print('New data: ', data)
-                #             file = open('file.txt', 'w')
-                #             file.write("\n" + data)
-                #             file.close()
-                #             last_string = data
-                #             #break
-                #     elif len(msg) > 1:
-                #         string = string + "\n" + data
-                #         string_count = string_count + 1
-                #
-                #         print(len(msg), string_count)
-                #
-                #         if string_count == len(msg):
-                #             print(string)
-                #             file = open('file.txt', 'w')
-                #             file.write(string)
-                #             file.close()
-                #             break
-                #         #print(string)
-                #         #pass
-                #         #print('more then one')
-                #continue
             else: print('Nothing detected')
 
 
