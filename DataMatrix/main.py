@@ -27,15 +27,11 @@ def op1 ():
     cv2.destroyAllWindows()         #closes window
 
 def op2 ():
-    #try:
-        #data = open('file.txt', 'x')
-    #except Exception as e:
-        #print(e)
-    #last_string = ''
-    #data = open('file.txt', 'w+')
-    #data.close()
-
     realsense = False
+    Windows = True
+    firstFrame = True
+    dim = ()
+
     if realsense:
         cap = cv2.VideoCapture(2)
         pipe = rs.pipeline()
@@ -50,6 +46,11 @@ def op2 ():
     while(True):
         ret, frame = cap.read()
 
+        if firstFrame:
+            dim = frame.shape
+            #print(dim)
+            firstFrame = False
+
         if realsense:
             frame2 = pipe.wait_for_frames()
             depth = frame2.get_depth_frame()
@@ -62,6 +63,8 @@ def op2 ():
             #color_colormap_dim = color.shape
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #gray_blur = cv2.boxFilter(gray, -1, (3, 3))
+        #gray_blur = cv2.GaussianBlur(gray, (3, 3), 0)
         ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
         if True:
@@ -70,8 +73,6 @@ def op2 ():
 
         if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
             # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
-
-            #cv2.imshow('frame', frame)
 
             msg = pylibdmtx.decode(thresh)  # kost veel computer power
 
@@ -83,13 +84,21 @@ def op2 ():
                     #temp.GS1 = m[0].decode()
                     GS1.setGS1(m[0])
 
-                file = open(r"C:\Users\Public\file.txt", "w")
-                file.write(GS1.setJson())
-                file.close()
+                if Windows:
+                    file = open(r"C:\Users\Public\file.txt", "w")
+                    file.write(GS1.setJson())
+                    file.close()
+                else:
+                    #path = Path(__file__).parent / ""
+                    #file = open(r"$HOME/", "w")
+                    #file = open(r"~/home", "w")
+                    file = open(r"/home/file.txt", "w")
+                    file.write(GS1.setJson())
+                    file.close()
             else: print('Nothing detected')
 
 
-        elif cv2.waitKey(1) & 0xFF == ord('g'):   #draws contours for anything the program identifies as 'box' (W.I.P.)
+        elif cv2.waitKey(1) & 0xFF == ord('g') or True:   #draws contours for anything the program identifies as 'box' (W.I.P.)
             # https://www.tutorialspoint.com/how-to-detect-a-rectangle-and-square-in-an-image-using-opencv-python
             #blur = cv2.GaussianBlur(gray, (7, 7), 0)
             #blur2 = cv2.boxFilter(gray, -1, (9, 9))
@@ -117,24 +126,26 @@ def op2 ():
             #endregion
 
             for c in range(len(contours)):
+                # childeren = hierarchy[c][2]
+
+                # print(childeren)
+
+                # if perimeter > 0: vormfactor = (4 * math.pi * area) / perimeter ** 2
+                # if area > 500 and area < 1000 and vormfactor > 0.3:
+                # con = contours[c]
 
                 area = cv2.contourArea(contours[c])
                 perimeter = cv2.arcLength(contours[c], True)
                 approx = cv2.approxPolyDP(contours[c], 0.01 * perimeter, True)
-
-                #childeren = hierarchy[c][2]
-
-                #print(childeren)
-
-                #if perimeter > 0: vormfactor = (4 * math.pi * area) / perimeter ** 2
-                #if area > 500 and area < 1000 and vormfactor > 0.3:
-                #con = contours[c]
 
                 cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
                 if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000):# or childeren > 0:
                     cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
 
                     x, y, w, h = cv2.boundingRect(contours[c])
+
+                    #print('X: ', x + w / 2, dim[1] / 2)
+                    #print('Y: ', y + h / 2, dim[0] / 2)
 
                     cropped = frame[y:h+y, x:w+x]
                     #print(x, w, y, h)
