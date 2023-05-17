@@ -40,22 +40,15 @@
                 var psi = new ProcessStartInfo
                 {
                     FileName = "/bin/bash",
-                    Arguments = "-c \"top -bn1 | grep '%Cpu(s)'\"",
+                    Arguments = "-c \"top -bn1 | awk '/^%Cpu/{print $2}'\"",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
-
                 var process = Process.Start(psi);
                 process.WaitForExit();
                 var output = process.StandardOutput.ReadToEnd();
-
-                var cpuUsageLine = output.Trim();
-                var cpuUsageParts = cpuUsageLine.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                var idleValue = double.Parse(cpuUsageParts[7], CultureInfo.InvariantCulture);
-                var cpuUsage = 100 - idleValue;
-
+                var cpuUsage = double.Parse(output.Trim());
                 return Math.Round(cpuUsage, 2);
             }
             else
