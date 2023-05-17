@@ -5,9 +5,9 @@ from pylibdmtx import pylibdmtx
 import pyrealsense2 as rs
 
 import GS1
-import json
 
-def op1 ():
+
+def op1():
 
     img = 1#cv2.imread('C:\Users\Public\Pictures\Datamatrix_3.jpg', cv2.IMREAD_UNCHANGED)    #load img    #dont work
 
@@ -26,7 +26,8 @@ def op1 ():
     #print(k)                        #prints hexadecimal id of pressed key
     cv2.destroyAllWindows()         #closes window
 
-def op2 ():
+
+def op2():
     realsense = False
     Windows = True
     firstFrame = True
@@ -48,7 +49,7 @@ def op2 ():
 
         if firstFrame:
             dim = frame.shape
-            #print(dim)
+            print("Width:", dim[1])
             firstFrame = False
 
         if realsense:
@@ -67,7 +68,7 @@ def op2 ():
         #gray_blur = cv2.GaussianBlur(gray, (3, 3), 0)
         ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
-        if True:
+        if False:
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
 
@@ -79,9 +80,7 @@ def op2 ():
             if msg:
                 GS1.clearGS1()
                 for m in msg:
-                    #print(m)
                     print(m[0])     #data in bytes
-                    #temp.GS1 = m[0].decode()
                     GS1.setGS1(m[0])
 
                 if Windows:
@@ -92,7 +91,7 @@ def op2 ():
                     #path = Path(__file__).parent / ""
                     #file = open(r"$HOME/", "w")
                     #file = open(r"~/home", "w")
-                    file = open(r"/home/file.txt", "w")
+                    file = open(r"/home/jetson/log/GS1/current_frame.log", "w")
                     file.write(GS1.setJson())
                     file.close()
             else: print('Nothing detected')
@@ -116,7 +115,7 @@ def op2 ():
             res_blur = cv2.boxFilter(res_gray, -1, (9, 9))
             #endregion
 
-            #regionContour detection
+            #region Contour detection
             #contrast = 3 * blur2 + 175
 
             ret, thresh = cv2.threshold(mask_blur, 180, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
@@ -124,6 +123,9 @@ def op2 ():
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
             #endregion
+
+            boxes = []
+            boxes_count = 0
 
             for c in range(len(contours)):
                 # childeren = hierarchy[c][2]
@@ -138,21 +140,49 @@ def op2 ():
                 perimeter = cv2.arcLength(contours[c], True)
                 approx = cv2.approxPolyDP(contours[c], 0.01 * perimeter, True)
 
-                cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
+                #cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
                 if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000):# or childeren > 0:
-                    cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
+                    #cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
+                    boxes.append(contours[c])
+                    boxes_count = boxes_count + 1
 
-                    x, y, w, h = cv2.boundingRect(contours[c])
+                    #x, y, w, h = cv2.boundingRect(contours[c])
 
                     #print('X: ', x + w / 2, dim[1] / 2)
                     #print('Y: ', y + h / 2, dim[0] / 2)
 
-                    cropped = frame[y:h+y, x:w+x]
+                    #cropped = frame[y:h+y, x:w+x]
                     #print(x, w, y, h)
                     #print(x:w, y:h)
-                    cv2.imshow('cropped', cropped)
+                    #cv2.imshow('cropped', cropped)
 
-                    cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
+                    #cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
+
+            for b in boxes:
+                cv2.drawContours(frame, [b], -1, (255, 105, 180), 3)
+                x, y, w, h = cv2.boundingRect(b)
+
+                X = x + w / 2
+                # Y = y + h / 2
+
+                if X < dim[1] / 2:
+                    #dif = (dim[1] / 2) - X  # 0 - 319
+                    dif = X / 320
+                    print("Left", "dif:", dif)
+                    pass
+                elif X > dim[1] / 2:
+                    #dif = X - (dim[1] / 2)  # 321 - 640
+                    dif = (dim[1] - X) / 320
+                    print("Right", "dif:", dif)
+                    pass
+
+                #print(len(range(boxes_count)))
+
+                cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
+
+                # string = 'cropped' + str(boxes_count)
+                # cropped = frame[y:h + y, x:w + x]
+                # cv2.imshow('cropped' + str(boxes_count), cropped)
 
             # Edge detection
             #edges = cv2.Canny(mask_blur, 100, 200, 90)
@@ -176,9 +206,9 @@ def op2 ():
     cap.release()
     cv2.destroyAllWindows()
 
-    d = open('file.txt', 'w')
-    d.write('')
-    d.close()
+    #d = open('file.txt', 'w')
+    #d.write('')
+    #d.close()
     #endregion
 
 op2()
