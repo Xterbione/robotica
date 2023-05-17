@@ -9,6 +9,7 @@
     using System.Diagnostics;
     using System.Runtime.InteropServices;
     using global::testAPI.Models;
+    using System.Globalization;
 
     public class SystemInfo
     {
@@ -39,16 +40,23 @@
                 var psi = new ProcessStartInfo
                 {
                     FileName = "/bin/bash",
-                    Arguments = "-c \"top -bn1 | grep 'Cpu(s)' | sed 's/.*, *\\([0-9.]*\\)%* id.*/\\1/'\"",
+                    Arguments = "-c \"top -bn1 | grep '%Cpu(s)'\"",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
+
                 var process = Process.Start(psi);
                 process.WaitForExit();
                 var output = process.StandardOutput.ReadToEnd();
-                var cpuUsage = double.Parse(output.Trim());
-                return Math.Round(100 - cpuUsage, 2);
+
+                var cpuUsageLine = output.Trim();
+                var cpuUsageParts = cpuUsageLine.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                var idleValue = double.Parse(cpuUsageParts[7], CultureInfo.InvariantCulture);
+                var cpuUsage = 100 - idleValue;
+
+                return Math.Round(cpuUsage, 2);
             }
             else
             {
