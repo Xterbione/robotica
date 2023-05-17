@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica\\testAPI\\testAPI\\testAPI.csproj": {}
+    "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica_new\\robotica\\testAPI\\testAPI\\testAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica\\testAPI\\testAPI\\testAPI.csproj": {
+    "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica_new\\robotica\\testAPI\\testAPI\\testAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica\\testAPI\\testAPI\\testAPI.csproj",
+        "projectUniqueName": "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica_new\\robotica\\testAPI\\testAPI\\testAPI.csproj",
         "projectName": "testAPI",
-        "projectPath": "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica\\testAPI\\testAPI\\testAPI.csproj",
+        "projectPath": "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica_new\\robotica\\testAPI\\testAPI\\testAPI.csproj",
         "packagesPath": "C:\\Users\\bryan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica\\testAPI\\testAPI\\obj\\",
+        "outputPath": "C:\\Users\\bryan\\Documents\\school\\jaar 2\\periode 4\\robotica_new\\robotica\\testAPI\\testAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\bryan\\AppData\\Roaming\\NuGet\\NuGet.Config",

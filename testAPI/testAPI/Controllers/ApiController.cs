@@ -49,8 +49,8 @@ namespace testAPI.Controllers
                     break;
             }
             var result = new ObjectSensorModel();
-            result.Weight = random.Next();
-            result.Temperature = random.Next();
+            result.Weight = random.Next(0,50);
+            result.Temperature = random.Next(20, 30);
             result.QRValue = "Something";
             result.frequentie = frequentie;
             result.CurrentObject = "Oxicodon";
