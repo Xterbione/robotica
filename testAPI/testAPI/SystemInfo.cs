@@ -49,7 +49,7 @@
                 process.WaitForExit();
                 var output = process.StandardOutput.ReadToEnd();
                 var cpuUsage = double.Parse(output.Trim());
-                return Math.Round(cpuUsage, 2);
+                return Math.Round(cpuUsage);
             }
             else
             {
