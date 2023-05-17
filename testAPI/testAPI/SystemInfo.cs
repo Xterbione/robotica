@@ -13,6 +13,9 @@
     public class SystemInfo
     {
 
+
+        //dit is een testbranch
+
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern UInt64 GetTickCount64();
         public static int GetCpuCores()

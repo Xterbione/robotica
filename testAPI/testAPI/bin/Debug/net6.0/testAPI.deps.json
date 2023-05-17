@@ -9,10 +9,6 @@
       "testAPI/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Cors": "2.2.0",
-          "OpenCvSharp4": "4.7.0.20230115",
-          "OpenCvSharp4.runtime.linux-arm64.cuda": "4.5.2.20210803",
-          "OpenCvSharp4.runtime.win": "4.7.0.20230115",
-          "OpenCvSharp4_.runtime.ubuntu.20.04-x64": "4.7.0.20230115",
           "Swashbuckle.AspNetCore": "6.2.3",
           "System.Management": "7.0.1"
         },
@@ -70,8 +66,8 @@
       },
       "Microsoft.Extensions.Primitives/2.2.0": {
         "dependencies": {
-          "System.Memory": "4.5.4",
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+          "System.Memory": "4.5.1",
+          "System.Runtime.CompilerServices.Unsafe": "4.5.1"
         }
       },
       "Microsoft.Net.Http.Headers/2.2.0": {
@@ -85,60 +81,6 @@
           "lib/netstandard2.0/Microsoft.OpenApi.dll": {
             "assemblyVersion": "1.2.3.0",
             "fileVersion": "1.2.3.0"
-          }
-        }
-      },
-      "OpenCvSharp4/4.7.0.20230115": {
-        "dependencies": {
-          "System.Memory": "4.5.4",
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        },
-        "runtime": {
-          "lib/net6.0/OpenCvSharp.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "OpenCvSharp4.runtime.linux-arm64.cuda/4.5.2.20210803": {
-        "runtimeTargets": {
-          "runtimes/linux-arm64/native/libOpenCvSharpExtern.so": {
-            "rid": "linux-arm64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          }
-        }
-      },
-      "OpenCvSharp4.runtime.win/4.7.0.20230115": {
-        "runtimeTargets": {
-          "runtimes/win-x64/native/OpenCvSharpExtern.dll": {
-            "rid": "win-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/win-x64/native/opencv_videoio_ffmpeg470_64.dll": {
-            "rid": "win-x64",
-            "assetType": "native",
-            "fileVersion": "2022.12.0.0"
-          },
-          "runtimes/win-x86/native/OpenCvSharpExtern.dll": {
-            "rid": "win-x86",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/win-x86/native/opencv_videoio_ffmpeg470.dll": {
-            "rid": "win-x86",
-            "assetType": "native",
-            "fileVersion": "2022.12.0.0"
-          }
-        }
-      },
-      "OpenCvSharp4_.runtime.ubuntu.20.04-x64/4.7.0.20230115": {
-        "runtimeTargets": {
-          "runtimes/ubuntu.20.04-x64/native/libOpenCvSharpExtern.so": {
-            "rid": "ubuntu.20.04-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -209,8 +151,8 @@
           }
         }
       },
-      "System.Memory/4.5.4": {},
-      "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
+      "System.Memory/4.5.1": {},
+      "System.Runtime.CompilerServices.Unsafe/4.5.1": {},
       "System.Text.Encodings.Web/4.5.0": {}
     }
   },
@@ -311,34 +253,6 @@
       "path": "microsoft.openapi/1.2.3",
       "hashPath": "microsoft.openapi.1.2.3.nupkg.sha512"
     },
-    "OpenCvSharp4/4.7.0.20230115": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-t6iHTxHQf56krbSzQhewSSGBYsoxhD1dP9eqZqWTztYOQ4WmrVi5HDjcGA4aaiSs5VIWfgykS6ddCZvIdhYMAg==",
-      "path": "opencvsharp4/4.7.0.20230115",
-      "hashPath": "opencvsharp4.4.7.0.20230115.nupkg.sha512"
-    },
-    "OpenCvSharp4.runtime.linux-arm64.cuda/4.5.2.20210803": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-rvHHdr8nHIk6gvR80UErqlAjvfj5hgyklbIXHEM1WsCWC5v227cIO1oehIM4ZONihYV0ERtdsBloC5Jz2xLU4A==",
-      "path": "opencvsharp4.runtime.linux-arm64.cuda/4.5.2.20210803",
-      "hashPath": "opencvsharp4.runtime.linux-arm64.cuda.4.5.2.20210803.nupkg.sha512"
-    },
-    "OpenCvSharp4.runtime.win/4.7.0.20230115": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-T5vVLA9rTIQ5HUQszG1RoACKjvkoiHugzQOWjFq3Eng447CWdBuxUepusUzMucl/K2O2ArRwwc999J2JymmjTA==",
-      "path": "opencvsharp4.runtime.win/4.7.0.20230115",
-      "hashPath": "opencvsharp4.runtime.win.4.7.0.20230115.nupkg.sha512"
-    },
-    "OpenCvSharp4_.runtime.ubuntu.20.04-x64/4.7.0.20230115": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-99ffLxAtjXoFYfuBq9mjZciyOGntFf031tBK/zV4DOVLfYJ1z+Nz3P4jwUoD+ofVL1NiLlWMSLnEw5YelXFghw==",
-      "path": "opencvsharp4_.runtime.ubuntu.20.04-x64/4.7.0.20230115",
-      "hashPath": "opencvsharp4_.runtime.ubuntu.20.04-x64.4.7.0.20230115.nupkg.sha512"
-    },
     "Swashbuckle.AspNetCore/6.2.3": {
       "type": "package",
       "serviceable": true,
@@ -395,19 +309,19 @@
       "path": "system.management/7.0.1",
       "hashPath": "system.management.7.0.1.nupkg.sha512"
     },
-    "System.Memory/4.5.4": {
+    "System.Memory/4.5.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
-      "path": "system.memory/4.5.4",
-      "hashPath": "system.memory.4.5.4.nupkg.sha512"
+      "sha512": "sha512-sDJYJpGtTgx+23Ayu5euxG5mAXWdkDb4+b0rD0Cab0M1oQS9H0HXGPriKcqpXuiJDTV7fTp/d+fMDJmnr6sNvA==",
+      "path": "system.memory/4.5.1",
+      "hashPath": "system.memory.4.5.1.nupkg.sha512"
     },
-    "System.Runtime.CompilerServices.Unsafe/6.0.0": {
+    "System.Runtime.CompilerServices.Unsafe/4.5.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-/iUeP3tq1S0XdNNoMz5C9twLSrM/TH+qElHkXWaPvuNOt+99G75NrV0OS2EqHx5wMN7popYjpc8oTjC1y16DLg==",
-      "path": "system.runtime.compilerservices.unsafe/6.0.0",
-      "hashPath": "system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+      "sha512": "sha512-Zh8t8oqolRaFa9vmOZfdQm/qKejdqz0J9kr7o2Fu0vPeoH3BL1EOXipKWwkWtLT1JPzjByrF19fGuFlNbmPpiw==",
+      "path": "system.runtime.compilerservices.unsafe/4.5.1",
+      "hashPath": "system.runtime.compilerservices.unsafe.4.5.1.nupkg.sha512"
     },
     "System.Text.Encodings.Web/4.5.0": {
       "type": "package",
