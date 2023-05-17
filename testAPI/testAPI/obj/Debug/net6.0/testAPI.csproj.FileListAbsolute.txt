@@ -35,3 +35,33 @@ C:\Users\bryan\source\repos\testAPI\testAPI\bin\Debug\net6.0\runtimes\win-x86\na
 C:\Users\bryan\source\repos\testAPI\testAPI\bin\Debug\net6.0\runtimes\win-x86\native\opencv_videoio_ffmpeg470.dll
 C:\Users\bryan\source\repos\testAPI\testAPI\bin\Debug\net6.0\runtimes\linux-arm64\native\libOpenCvSharpExtern.so
 C:\Users\bryan\source\repos\testAPI\testAPI\bin\Debug\net6.0\runtimes\ubuntu.20.04-x64\native\libOpenCvSharpExtern.so
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\appsettings.Development.json
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\appsettings.json
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\testAPI.exe
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\testAPI.deps.json
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\testAPI.runtimeconfig.json
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\testAPI.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\testAPI.pdb
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\Microsoft.OpenApi.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\System.CodeDom.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\System.Management.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Management.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.csproj.AssemblyReference.cache
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.AssemblyInfoInputs.cache
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.AssemblyInfo.cs
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.csproj.CoreCompileInputs.cache
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\staticwebassets.build.json
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\staticwebassets.development.json
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\scopedcss\bundle\testAPI.styles.css
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.csproj.CopyComplete
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\refint\testAPI.dll
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.pdb
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\testAPI.genruntimeconfig.cache
+C:\Users\bryan\Documents\school\jaar 2\periode 4\robotica_new\robotica\testAPI\testAPI\obj\Debug\net6.0\ref\testAPI.dll

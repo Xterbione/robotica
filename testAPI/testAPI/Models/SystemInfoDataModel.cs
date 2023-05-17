@@ -13,5 +13,7 @@
 
         public string RuntimeMinutes {get; set;}
         public double CpuUsage { get; set; }
+        public double DiskInput { get; set; }
+        public double DiskOutput { get; set; }
     }
 }

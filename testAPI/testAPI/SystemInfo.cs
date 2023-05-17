@@ -71,6 +71,8 @@
             data.TextToSpeech = false;
             data.RuntimeMinutes = SystemInfo.GetRuntimeMinutes();
             data.ServiceStatus = "";
+            data.DiskInput = SystemInfo.GetDiskIO()[0];
+            data.DiskOutput = SystemInfo.GetDiskIO()[1];
             return data;
         }
         public static string GetServiceStatus()
@@ -136,6 +138,48 @@
                 throw new Exception("Unsupported platform: " + RuntimeInformation.OSDescription);
             }
             return runtimeMinutes;
+        }
+
+
+        public static double[] GetDiskIO()
+        {
+            double[] diskIO = new double[2]; // [0] - Disk Read, [1] - Disk Write
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "/usr/sbin/iotop",
+                    Arguments = "-b -n1 -qqq",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                var process = Process.Start(psi);
+                process.WaitForExit();
+                var output = process.StandardOutput.ReadToEnd();
+
+                var lines = output.Split("\n");
+
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("Total DISK READ:"))
+                    {
+                        var parts = line.Split(new[] { "B/s" }, StringSplitOptions.RemoveEmptyEntries);
+                        var diskReadValue = parts[0].Split(':')[1].Trim();
+                        diskIO[0] = double.Parse(diskReadValue);
+                    }
+                    else if (line.StartsWith("Total DISK WRITE:"))
+                    {
+                        var parts = line.Split(new[] { "B/s" }, StringSplitOptions.RemoveEmptyEntries);
+                        var diskWriteValue = parts[0].Split(':')[1].Trim();
+                        diskIO[1] = double.Parse(diskWriteValue);
+                    }
+                }
+            }
+
+            return diskIO;
         }
     }
 }
