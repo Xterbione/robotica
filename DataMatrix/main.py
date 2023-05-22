@@ -140,7 +140,7 @@ def op2():
                 perimeter = cv2.arcLength(contours[c], True)
                 approx = cv2.approxPolyDP(contours[c], 0.01 * perimeter, True)
 
-                #cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
+                cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
                 if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000):# or childeren > 0:
                     #cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
                     boxes.append(contours[c])
@@ -165,18 +165,12 @@ def op2():
                 X = x + w / 2
                 # Y = y + h / 2
 
-                if X < dim[1] / 2:
-                    #dif = (dim[1] / 2) - X  # 0 - 319
-                    dif = X / 320
-                    print("Left", "dif:", dif)
-                    pass
-                elif X > dim[1] / 2:
-                    #dif = X - (dim[1] / 2)  # 321 - 640
-                    dif = (dim[1] - X) / 320
+                if X < dim[1] / 2:      # Left of screen, dif indicates how far away from center screen on a scale of 0 to 1
+                    dif = 1 - (X / 320)
+                    print("Left", "dif:",  dif)
+                elif X > dim[1] / 2:    # Right of screen, dif indicates how far away from center screen on a scale of 0 to 1
+                    dif = 1 - (dim[1] - X) / 320
                     print("Right", "dif:", dif)
-                    pass
-
-                #print(len(range(boxes_count)))
 
                 cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
 
