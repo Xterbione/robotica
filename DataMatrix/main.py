@@ -55,27 +55,24 @@ def op2():
         if realsense:
             frame2 = pipe.wait_for_frames()
             depth = frame2.get_depth_frame()
-            #color = frame2.get_color_frame()
 
             depth2 = np.asanyarray(depth.get_data())
-            #if color: color2 = np.asanyarray(color.get_data())
 
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth2, alpha=0.03), cv2.COLORMAP_JET)
-            #color_colormap_dim = color.shape
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         #gray_blur = cv2.boxFilter(gray, -1, (3, 3))
         #gray_blur = cv2.GaussianBlur(gray, (3, 3), 0)
-        ret, thresh = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+        ret, threshInnit = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
         if False:
-            contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv2.findContours(threshInnit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
 
         if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
             # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
 
-            msg = pylibdmtx.decode(thresh)  # kost veel computer power
+            msg = pylibdmtx.decode(threshInnit)  # kost veel computer power
 
             if msg:
                 GS1.clearGS1()
@@ -104,15 +101,16 @@ def op2():
 
             #region Masking
             hls = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
+            #hls = 3 * hls
             Lchannel = hls[:, :, 1]
 
-            mask = cv2.inRange(Lchannel, 180, 255)
-            res = cv2.bitwise_and(frame, frame, mask=mask)
+            mask = cv2.inRange(Lchannel, 200, 255)
+            #res = cv2.bitwise_and(frame, frame, mask=mask)
 
             mask_blur = cv2.boxFilter(mask, -1, (5, 5))
 
-            res_gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
-            res_blur = cv2.boxFilter(res_gray, -1, (9, 9))
+            #res_gray = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+            #res_blur = cv2.boxFilter(res_gray, -1, (9, 9))
             #endregion
 
             #region Contour detection
@@ -140,8 +138,10 @@ def op2():
                 perimeter = cv2.arcLength(contours[c], True)
                 approx = cv2.approxPolyDP(contours[c], 0.01 * perimeter, True)
 
+                isBox = len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000
+
                 cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
-                if (len(approx) >= 4 and len(approx) <= 6 and area > 3000 and area < 200000):# or childeren > 0:
+                if isBox:# or childeren > 0:
                     #cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
                     boxes.append(contours[c])
                     boxes_count = boxes_count + 1
@@ -186,6 +186,7 @@ def op2():
             #cv2.imshow('res', res)
             cv2.imshow('mask', mask_blur)
             cv2.imshow('frame', frame)
+            cv2.imshow('hls', hls)
             if realsense: cv2.imshow('realsense', depth_colormap)
             #if color: cv2.imshow('realsense2', color2)
             #continue
