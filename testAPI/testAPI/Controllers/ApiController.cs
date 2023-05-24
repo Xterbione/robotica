@@ -51,7 +51,7 @@ namespace testAPI.Controllers
             var result = new ObjectSensorModel();
             result.Weight = random.Next(0,50);
             result.Temperature = random.Next(20, 30);
-            result.QRValue = GS1.getJson(GS1.Ex1_1);//new List<string>() { "Something", "Another", "This", "That" };
+            result.QRValue = GS1.getFile();
             result.frequentie = frequentie;
             result.CurrentObject = "Oxicodon";
             result.category = category;

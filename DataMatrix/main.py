@@ -2,39 +2,53 @@ import numpy as np
 import cv2
 import math
 from pylibdmtx import pylibdmtx
+from datetime import date
 import pyrealsense2 as rs
 
-import GS1
+import main
+
+frameCount = 0
+
+currentDate = str(date.today())
+path = ""
+
+def innit():
+    main.path = "C:/Users/Public/" + main.currentDate + ".txt"
+
+    file = open(main.path, "w")
+    file.close()
 
 
-def op1():
+def GS1decode(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    ret, threshInnit = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
-    img = 1#cv2.imread('C:\Users\Public\Pictures\Datamatrix_3.jpg', cv2.IMREAD_UNCHANGED)    #load img    #dont work
+    msg = pylibdmtx.decode(threshInnit)
 
-    #h, w, c = img.shape
-
-    resize = cv2.resize(img, (500, 500), interpolation=cv2.INTER_LINEAR)
-    gray = cv2.cvtColor(resize, cv2.COLOR_BGR2GRAY)
-
-    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-
-    msg = pylibdmtx.decode(thresh)
-    print(msg)
-
-    cv2.imshow('matrix', resize)         #sets type of display and content of display
-    k = cv2.waitKey(0)              #waits for key press
-    #print(k)                        #prints hexadecimal id of pressed key
-    cv2.destroyAllWindows()         #closes window
+    if msg:
+        file = open(main.path, "a")
+        for m in msg:
+            print(m[0])  # data in bytes
+            # GS1.setGS1(m[0])
+            file.write(m[0].decode() + "\n")
+        file.close()
+        #    file = open(r"/home/jetson/log/GS1/current_frame.log", "w")
+    else:
+        print('Nothing detected')
 
 
-def op2():
+def videoCap():
     realsense = False
     Windows = True
     firstFrame = True
+
+    #frameCount = 0
+
+
     dim = ()
 
     if realsense:
-        cap = cv2.VideoCapture(2)
+        cap = cv2.VideoCapture(1)
         pipe = rs.pipeline()
         config = rs.config()
 
@@ -60,38 +74,10 @@ def op2():
 
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth2, alpha=0.03), cv2.COLORMAP_JET)
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #gray_blur = cv2.boxFilter(gray, -1, (3, 3))
-        #gray_blur = cv2.GaussianBlur(gray, (3, 3), 0)
-        ret, threshInnit = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-
-        if False:
-            contours, hierarchy = cv2.findContours(threshInnit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)   #draws contours for anything the camera sees
 
         if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
             # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
-
-            msg = pylibdmtx.decode(threshInnit)  # kost veel computer power
-
-            if msg:
-                GS1.clearGS1()
-                for m in msg:
-                    print(m[0])     #data in bytes
-                    GS1.setGS1(m[0])
-
-                if Windows:
-                    file = open(r"C:\Users\Public\file.txt", "w")
-                    file.write(GS1.setJson())
-                    file.close()
-                else:
-                    #path = Path(__file__).parent / ""
-                    #file = open(r"$HOME/", "w")
-                    #file = open(r"~/home", "w")
-                    file = open(r"/home/jetson/log/GS1/current_frame.log", "w")
-                    file.write(GS1.setJson())
-                    file.close()
-            else: print('Nothing detected')
+            GS1decode(frame)
 
 
         elif cv2.waitKey(1) & 0xFF == ord('g') or True:   #draws contours for anything the program identifies as 'box' (W.I.P.)
@@ -101,7 +87,15 @@ def op2():
 
             #region Masking
             hls = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
-            #hls = 3 * hls
+            #hls2 = hls
+            if False:
+                for y in range(len(hls)):
+                    for x in range(len(hls[y])):
+                        if hls[y][x][1] < 150:
+                            hls[y][x] = 0.3 * hls[y][x]
+                        else: hls[y][x] = 5 * hls[y][x]
+                    #print(hls[y][x])
+
             Lchannel = hls[:, :, 1]
 
             mask = cv2.inRange(Lchannel, 200, 255)
@@ -123,7 +117,7 @@ def op2():
             #endregion
 
             boxes = []
-            boxes_count = 0
+            #boxes_count = 0
 
             for c in range(len(contours)):
                 # childeren = hierarchy[c][2]
@@ -142,9 +136,8 @@ def op2():
 
                 cv2.drawContours(frame, contours, -1, (0, 0, 0), 3)  # draws contours for anything the camera sees
                 if isBox:# or childeren > 0:
-                    #cv2.drawContours(frame, [contours[c]], -1, (255, 105, 180), 3)
                     boxes.append(contours[c])
-                    boxes_count = boxes_count + 1
+                    #boxes_count = boxes_count + 1
 
                     #x, y, w, h = cv2.boundingRect(contours[c])
 
@@ -159,8 +152,13 @@ def op2():
                     #cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
 
             for b in boxes:
-                cv2.drawContours(frame, [b], -1, (255, 105, 180), 3)
                 x, y, w, h = cv2.boundingRect(b)
+                cropped = frame[y:h + y, x:w + x]
+                print(cropped.shape)
+                GS1decode(cropped)
+
+                cv2.drawContours(frame, [b], -1, (255, 105, 180), 3)
+                # cv2.imshow('cropped' + str(boxes_count), cropped)
 
                 X = x + w / 2
                 # Y = y + h / 2
@@ -174,9 +172,7 @@ def op2():
 
                 cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
 
-                # string = 'cropped' + str(boxes_count)
-                # cropped = frame[y:h + y, x:w + x]
-                # cv2.imshow('cropped' + str(boxes_count), cropped)
+
 
             # Edge detection
             #edges = cv2.Canny(mask_blur, 100, 200, 90)
@@ -187,15 +183,19 @@ def op2():
             cv2.imshow('mask', mask_blur)
             cv2.imshow('frame', frame)
             cv2.imshow('hls', hls)
+            #cv2.imshow('hls2', hls2)
             if realsense: cv2.imshow('realsense', depth_colormap)
             #if color: cv2.imshow('realsense2', color2)
             #continue
 
         else:
             cv2.imshow('frame', frame)  # sets type of display and content of display
+            if realsense: cv2.imshow('realsense', depth_colormap)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):           #waits till 'q' is pressed
-            break                                       #breaks out of while loop
+            break
+        #print(main.frameCount)
+        main.frameCount = main.frameCount + 1
 
     #region Shutdown
     cap.release()
@@ -206,4 +206,5 @@ def op2():
     #d.close()
     #endregion
 
-op2()
+innit()
+videoCap()
