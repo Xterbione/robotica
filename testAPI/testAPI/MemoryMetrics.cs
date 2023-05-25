@@ -1,24 +1,24 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using testAPI.Models;
 
 namespace testAPI
 {
-    public class MemoryMetrics
-    {
-        public double Total;
-        public double Used;
-        public double Free;
-        public double DiskTotal;
-        public double DiskFree;
-    }
 
-    public class MemoryMetricsClient
+
+    public class MemoryMetrics
     {
         private const int DigitsInResult = 2;
         private static long totalMemoryInKb;
-        public MemoryMetrics GetMetrics()
+
+
+        /// <summary>
+        /// general function for calling, figures out OS and uses the proper function.
+        /// </summary>
+        /// <returns>MemoryMetricsModel</returns>
+        public MemoryMetricsModel GetMetrics()
         {
-            if (IsUnix())
+            if (SystemInfo.IsUnix())
             {
                 return GetUnixMetrics();
             }
@@ -26,15 +26,12 @@ namespace testAPI
             return GetWindowsMetrics();
         }
 
-        public static bool IsUnix()
-        {
-            var isUnix = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
-                         RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-            return isUnix;
-        }
-
-        private MemoryMetrics GetWindowsMetrics()
+        /// <summary>
+        /// returns the memory metric of the system
+        /// </summary>
+        /// <returns>MemoryMetricsModel</returns>
+        private MemoryMetricsModel GetWindowsMetrics()
         {
             var output = "";
 
@@ -52,15 +49,18 @@ namespace testAPI
             var freeMemoryParts = lines[0].Split("=", StringSplitOptions.RemoveEmptyEntries);
             var totalMemoryParts = lines[1].Split("=", StringSplitOptions.RemoveEmptyEntries);
 
-            var metrics = new MemoryMetrics();
+            var metrics = new MemoryMetricsModel();
             metrics.Total = Math.Round(double.Parse(totalMemoryParts[1]) / 1024, 0);
             metrics.Free = Math.Round(double.Parse(freeMemoryParts[1]) / 1024, 0);
             metrics.Used = metrics.Total - metrics.Free;
 
             return metrics;
         }
-
-        private MemoryMetrics GetUnixMetrics()
+        /// <summary>
+        /// gets the memory metrics for unix
+        /// </summary>
+        /// <returns>MemoryMetricsModel</returns>
+        private MemoryMetricsModel GetUnixMetrics()
         {
             var output = "";
 
@@ -78,7 +78,7 @@ namespace testAPI
             var lines = output.Split("\n");
             var memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-            var metrics = new MemoryMetrics();
+            var metrics = new MemoryMetricsModel();
             metrics.Total = double.Parse(memory[1]);
             metrics.Used = double.Parse(memory[2]);
             metrics.Free = double.Parse(memory[3]);

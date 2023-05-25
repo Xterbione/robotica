@@ -9,6 +9,9 @@ namespace testAPI.Controllers
     [ApiController]
     public class ApiController : ControllerBase
     {
+        /// <summary>
+        /// access to predefined color types
+        /// </summary>
         private string[] colors = new string[] {
             "#FF0000", // Red
             "#00FF00", // Green
@@ -32,6 +35,12 @@ namespace testAPI.Controllers
         {
             //not much here yet
         }
+
+
+        /// <summary>
+        /// gets the sensor values of the awareness sensors
+        /// </summary>
+        /// <returns>JsonResult</returns>
         [HttpGet("/getobjectsensor")]
         public JsonResult Getobjsens()
         {   var frequentie = random.Next(0, 4000);
@@ -58,6 +67,11 @@ namespace testAPI.Controllers
             return new JsonResult(Ok(result));
         }
 
+        /// <summary>
+        /// gets all servo voltage stats
+        /// </summary>
+        /// <returns>JsonResult</returns>
+
         [HttpGet("/getservostats")]
         public JsonResult Getservos()
         {
@@ -69,6 +83,11 @@ namespace testAPI.Controllers
             result.labels = new List<string> { "wheel fl", "wheel fr", "wheel rl", "wheel rr", "grip", "arm positioner" };
             return new JsonResult(Ok(result));
         }
+
+        /// <summary>
+        /// gets all servo stats including older stats from memory for graph data
+        /// </summary>
+        /// <returns>JsonResult</returns>
 
         [HttpGet("/getservostatsgraph")]
         public JsonResult Getservosgraph()
@@ -105,7 +124,10 @@ namespace testAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// returns a webcam frame to the client
+        /// </summary>
+        /// <returns>String of bytes that can be transformed to an image</returns>
         [HttpGet("/webcamframe")]
         public String GetWebcamFrame()
         {
@@ -141,7 +163,10 @@ namespace testAPI.Controllers
 
 
 
-
+        /// <summary>
+        /// gets all current servo positions
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("/getservopos")]
         public JsonResult GetServoPos()
         {
@@ -167,6 +192,11 @@ namespace testAPI.Controllers
         }
 
 
+        /// <summary>
+        /// gets all the hardware information
+        /// </summary>
+        /// <returns>JsonResult</returns>
+
         [HttpGet("/hwstats")]
         public JsonResult GetHWStats()
         {
@@ -174,6 +204,11 @@ namespace testAPI.Controllers
             var result = SystemInfo.GetSystemInfo();
             return new JsonResult(Ok(result));
         }
+
+        /// <summary>
+        /// gets all linux services and wether they are enabled or not
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("/servicestatus")]
         public JsonResult GetServiceStatus()
         {

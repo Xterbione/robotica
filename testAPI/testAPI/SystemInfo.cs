@@ -16,11 +16,22 @@
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern UInt64 GetTickCount64();
+
+        /// <summary>
+        /// gets the cpu cores of the pc and returns the number as an int
+        /// </summary>
+        /// <returns>CPU Core Count Int</returns>
         public static int GetCpuCores()
         {
             return Environment.ProcessorCount;
         }
 
+
+        /// <summary>
+        /// returns the cpu usage as a double
+        /// </summary>
+        /// <returns>cpu usage as Double</returns>
+        /// <exception cref="PlatformNotSupportedException"></exception>
         public static double GetCpuUsage()
         {
             double systemUsage = 0;
@@ -35,7 +46,7 @@
                 }
                 return Math.Round(systemUsage / Environment.ProcessorCount / cpuCounter.TotalSeconds * 100, 2);
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (SystemInfo.IsUnix())
             {
                 var psi = new ProcessStartInfo
                 {
@@ -57,16 +68,20 @@
             }
         }
 
+        /// <summary>
+        /// returns system info and combines several functions of several classes to return the full data object
+        /// </summary>
+        /// <returns>sysinfo data object SystemInfoDataModel</returns>
         public static SystemInfoDataModel GetSystemInfo()
         {
-            var m = new MemoryMetricsClient();
+            var m = new MemoryMetrics();
             SystemInfoDataModel data = new SystemInfoDataModel();
             data.TotalMemory = m.GetMetrics().Total;
             data.UsedMemory = m.GetMetrics().Used;
             data.CpuCores = GetCpuCores();
             data.CpuUsage = GetCpuUsage();
-            data.TotalDisk = (MemoryMetricsClient.GetTotalDiskSpace() / 1024 / 1024);
-            data.DiskFree = MemoryMetricsClient.GetAvailableDiskSpace() / 1024 / 1024;
+            data.TotalDisk = (MemoryMetrics.GetTotalDiskSpace() / 1024 / 1024);
+            data.DiskFree = MemoryMetrics.GetAvailableDiskSpace() / 1024 / 1024;
             data.ObjectDetection = false;
             data.TextToSpeech = false;
             data.RuntimeMinutes = SystemInfo.GetRuntimeMinutes();
@@ -75,17 +90,17 @@
             data.DiskOutput = SystemInfo.GetDiskIO()[1];
             return data;
         }
+
+
+        /// <summary>
+        /// gets the services installed on the linux system and shows wether they are enabled or not
+        /// </summary>
+        /// <returns></returns>
+
         public static string GetServiceStatus()
         {
 
-            var data = GetServices();
-            return data;
-        }
-
-        public static string GetServices()
-        {
-
-            if (MemoryMetricsClient.IsUnix())
+            if (SystemInfo.IsUnix())
             {
                 try
                 {
@@ -106,6 +121,12 @@
             }
         }
 
+
+        /// <summary>
+        /// gets the runtime of the OS
+        /// </summary>
+        /// <returns>runtime of OS in string</returns>
+        /// <exception cref="Exception"></exception>
         public static string GetRuntimeMinutes()
         {
             string runtimeMinutes = "0";
@@ -115,7 +136,7 @@
                 var uptime = GetTickCount64();
                 runtimeMinutes += TimeSpan.FromMilliseconds(uptime).TotalMinutes;
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (SystemInfo.IsUnix())
             {
                 // Linux or macOS
                 var uptimeProcess = new Process();
@@ -140,12 +161,15 @@
             return runtimeMinutes;
         }
 
-
+        /// <summary>
+        /// gets the current disk Usage of the pc
+        /// </summary>
+        /// <returns>Disk IO</returns>
         public static double[] GetDiskIO()
         {
-            double[] diskIO = new double[2]; // [0] - Disk Read, [1] - Disk Write
+            double[] diskIO = new double[2]; 
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (SystemInfo.IsUnix())
             {
                 var psi = new ProcessStartInfo
                 {
@@ -180,6 +204,18 @@
             }
 
             return diskIO;
+        }
+        /// <summary>
+        /// finds out wether the platform is unix based
+        /// </summary>
+        /// <returns>Bool</returns>
+
+        public static bool IsUnix()
+        {
+            var isUnix = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ||
+                         RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+            return isUnix;
         }
     }
 }
