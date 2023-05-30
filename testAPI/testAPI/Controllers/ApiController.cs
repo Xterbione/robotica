@@ -16,7 +16,6 @@ namespace testAPI.Controllers
         /// access to predefined color types
         /// </summary>
         /// 
-        private readonly RosSubscriber rosSubscriber;
         private string[] colors = new string[] {
             "#FF0000", // Red
             "#00FF00", // Green
@@ -38,7 +37,7 @@ namespace testAPI.Controllers
         private Random random = new Random();
         public ApiController()
         {
-            rosSubscriber = new RosSubscriber("http://192.168.74.138:9090");
+          
         }
 
 
@@ -129,44 +128,6 @@ namespace testAPI.Controllers
         }
 
 
-        /// <summary>
-        /// returns a webcam frame to the client
-        /// </summary>
-        /// <returns>String of bytes that can be transformed to an image</returns>
-        [HttpGet("/webcamframe")]
-        public String GetWebcamFrame()
-        {
-
-
-            //Convert the image to PNG format
-
-
-            //using (MemoryStream stream = new MemoryStream())
-            //{
-            //    lock (capturelock)
-            //    {
-            //        try
-            //        {
-            //            Capture an image from the webcam
-
-            //            capture.Read(frame);
-            //            Cv2.ImEncode(".jpg", frame, out pngBytes);
-            //            capturelock = true;
-            //        }
-            //        catch (Exception)
-            //        {
-
-            //        }
-            //    }
-
-            //}
-
-            //Serve the PNG image as an HTTP response
-            //return File(pngBytes, "image/png");
-            return "";
-        }
-
-
 
         /// <summary>
         /// gets all current servo positions
@@ -222,17 +183,5 @@ namespace testAPI.Controllers
             return new JsonResult(Ok(result));
         }
 
-        [HttpGet("data")]
-        public async Task<IActionResult> GetRosData()
-        {
-            var data = await rosSubscriber.GetLatestMessage("turtle1/pose");
-
-            if (data == null)
-            {
-                return BadRequest("Failed to retrieve ROS data");
-            }
-
-            return Ok(data);
-        }
     }
 }

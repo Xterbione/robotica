@@ -173,8 +173,8 @@
             {
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "/usr/sbin/iotop",
-                    Arguments = "-b -n1 -qqq",
+                    FileName = "sudo",
+                    Arguments = "/usr/sbin/iotop -b -n1 -qqq",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
