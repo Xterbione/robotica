@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace testAPI.Models
 {
@@ -6,28 +8,24 @@ namespace testAPI.Models
     {
         static string currentDate = DateTime.Today.ToString("yyyy-MM-dd");
 
-        //public const string Ex0 = "[\"Apple\",\"Banana\",\"Orange\",\"Grape\"]";
-        //public const string Ex1 = "{\"GS1\": [{\"Data\": \"7240Afnemercode4301I7041\"}]}";
-        //public const string Ex1_1 = "[{\"7240Afnemercode4301I7041\"}]";
-        //public const string Ex2 = "{\"GS1\": [{\"Data\": \"7240Afnemercode4301I7030_3DO\"}, {\"Data\": \"7240Afnemercode4301I70184CN\"}, {\"Data\": \"7240Afnemercode4301I7017\"}]}";
-        //public const string Ex2_2 = "{\"GS1\": [{\"Data\": \"7240Afnemercode4301I7030_3DO\"}, {\"Data\": \"7240Afnemercode4301I70184CN\"}, {\"Data\": \"7240Afnemercode4301I7017\"}]}";
-        //public const string Ex3 = "{\"GS1\": [{\"Data\": \"7240Afnemercode4301I7050\"}, {\"Data\": \"7240Afnemercode4301I7041\"}, {\"Data\": \"7240Afnemercode4301I7032\"}]}";
-        //public const string Ex4 = "{\"GS1\": [{\"Data\": \"7240Afnemercode4301I6860\"}, {\"Data\": \"7240Afnemercode4301E0001\"}, {\"Data\": \"7240Afnemercode4301I6803\"}, {\"Data\": \"7240Afnemercode4301E0006\"}, {\"Data\": \"7240Afnemercode4301E6318\"}, {\"Data\": \"7240Afnemercode4301E0525\"}]}";
-
-        public static string getFile()
+        public static JsonArray getFile()
         {
             Console.WriteLine(DateTime.Today.ToString("yyyy-MM-dd"));
 
             string path = @"C:\Users\Public\" + currentDate + ".txt";
 
-            string strings = "[" + new List<string>(File.ReadLines(path).TakeLast(5)) + "]";
+            var jsonArray = new JsonArray();
 
-            /*if (strings.Last() == null)
+
+            foreach (string line in File.ReadLines(path).TakeLast(5))
             {
-                string.remove()
-            }*/
+                var jsonObject = JsonDocument.Parse(line).RootElement;
 
-            return strings;
+                // Add the JSON object to the array
+                jsonArray.Add(jsonObject);
+            }
+
+            return jsonArray;
         }
     }
 }

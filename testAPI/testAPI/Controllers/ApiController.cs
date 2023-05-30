@@ -5,13 +5,18 @@ using testAPI.Models;
 
 namespace testAPI.Controllers
 {
-    [Route("api/[controller]")]
+
+
+
+    [Route("/")]
     [ApiController]
     public class ApiController : ControllerBase
     {
         /// <summary>
         /// access to predefined color types
         /// </summary>
+        /// 
+        private readonly RosSubscriber rosSubscriber;
         private string[] colors = new string[] {
             "#FF0000", // Red
             "#00FF00", // Green
@@ -33,7 +38,7 @@ namespace testAPI.Controllers
         private Random random = new Random();
         public ApiController()
         {
-            //not much here yet
+            rosSubscriber = new RosSubscriber("http://192.168.74.138:9090");
         }
 
 
@@ -215,6 +220,19 @@ namespace testAPI.Controllers
 
             var result = SystemInfo.GetServiceStatus();
             return new JsonResult(Ok(result));
+        }
+
+        [HttpGet("data")]
+        public async Task<IActionResult> GetRosData()
+        {
+            var data = await rosSubscriber.GetLatestMessage("turtle1/pose");
+
+            if (data == null)
+            {
+                return BadRequest("Failed to retrieve ROS data");
+            }
+
+            return Ok(data);
         }
     }
 }
