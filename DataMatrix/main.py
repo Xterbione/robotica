@@ -18,7 +18,7 @@ def GS1decode(frame, path):
     #print(frame.shape)
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    ret, threshInnit = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    ret, threshInnit = cv2.threshold(gray, 50, 255, cv2.THRESH_OTSU)# | cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
 
     msg = pylibdmtx.decode(threshInnit)
 
@@ -100,7 +100,7 @@ def videoCap():
 
 
             #region Contour detection
-            ret, thresh = cv2.threshold(mask_blur, 180, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+            ret, thresh = cv2.threshold(mask_blur, 180, 255, cv2.THRESH_OTSU)# | cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             #endregion
 
@@ -132,10 +132,10 @@ def videoCap():
                 X = x + w / 2
                 # Y = y + h / 2
 
-                if X < frame.shape[1] / 2:      # Left of screen, dif indicates how far away from center screen on a scale of 0 to 1
+                if X < frame.shape[1] / 2 and False:      # Left of screen, dif indicates how far away from center screen on a scale of 0 to 1
                     dif = 1 - (X / 320)
                     print("Left", "dif:",  dif)
-                elif X > frame.shape[1] / 2:    # Right of screen, dif indicates how far away from center screen on a scale of 0 to 1
+                elif X > frame.shape[1] / 2 and False:    # Right of screen, dif indicates how far away from center screen on a scale of 0 to 1
                     dif = 1 - (frame.shape[1] - X) / 320
                     print("Right", "dif:", dif)
 
