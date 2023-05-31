@@ -5,23 +5,12 @@ from pylibdmtx import pylibdmtx
 import datetime
 import pyrealsense2 as rs
 
-import main
-
-frameCount = 0
-
 currentDate = str(datetime.date.today())
-path = ""
 
-def innit():
-    main.path = "C:/Users/Public/" + currentDate + ".txt"
-
-    file = open(main.path, "w")     # Makes sure file exists
-    file.close()
-
-    #videoCap()
-
-
-def GS1decode(frame):
+### Analyzes the given frame for GS1 data-matrixes
+### If one or more data-matrixes are found they are decoded and written away
+### The file location is given from the method call and is defined at the start of the "videoCap" method
+def GS1decode(frame, path):
     #print(frame.shape)
     if frame.shape[0] < 200 or frame.shape[1] < 200:
         frame = cv2.resize(frame, (0,0), fx=5, fy=5)
@@ -34,7 +23,7 @@ def GS1decode(frame):
     msg = pylibdmtx.decode(threshInnit)
 
     if msg:
-        file = open(main.path, "a")
+        file = open(path, "a")
         for m in msg:
             print(m[0])  # data in bytes
             file.write('{"timestamp":"' + datetime.datetime.now().strftime("%X") + '","data":"' + m[0].decode() + '"}' + "\n")
@@ -45,10 +34,19 @@ def GS1decode(frame):
 
     #cv2.imshow('GS1', frame)
 
-
+### Contains the loop of the video capture
+### Pressing the 'f' key sends the whole frame to be decoded by the GS1 protocol
+### Pressing the 'g' key analyzes the frame for "medicijndoosjes"
+### (Currently turned on by default, if it isn't it has stutter)
 def videoCap():
     realsense = False
-    Windows = True
+
+    path = "C:/Users/Public/" + currentDate + ".txt"
+    frameCount = 0
+
+    ### Opens file as a write to make sure the file exists
+    file = open(path, "w")
+    file.close()
 
     if realsense:
         cap = cv2.VideoCapture(1)
@@ -73,20 +71,14 @@ def videoCap():
             depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(depth2, alpha=0.03), cv2.COLORMAP_JET)
 
 
-        if cv2.waitKey(1) & 0xFF == ord('f'):   #decode GS1-Matrix if found, works with the found thresholds
-            # https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html
-            GS1decode(frame)
+        if cv2.waitKey(1) & 0xFF == ord('f'):
+            GS1decode(frame, path)
 
 
-        elif cv2.waitKey(1) & 0xFF == ord('g') or True:   #draws contours for anything the program identifies as 'box' (W.I.P.)
-            # https://www.tutorialspoint.com/how-to-detect-a-rectangle-and-square-in-an-image-using-opencv-python
-            #blur = cv2.GaussianBlur(gray, (7, 7), 0)
-            #blur2 = cv2.boxFilter(gray, -1, (9, 9))
-
+        elif cv2.waitKey(1) & 0xFF == ord('g') or True:
 
             #region Masking
             hls = cv2.cvtColor(frame, cv2.COLOR_BGR2HLS)
-            #hls2 = hls
             if False:       # Code for messing with the contrast of individual pixels
                 for y in range(len(hls)):
                     for x in range(len(hls[y])):
@@ -108,13 +100,13 @@ def videoCap():
 
 
             #region Contour detection
-            #contrast = 3 * blur2 + 175
-
             ret, thresh = cv2.threshold(mask_blur, 180, 255, cv2.THRESH_BINARY | cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
             contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             #endregion
 
+
             boxes = []
+            boxCount = 0
 
             for c in range(len(contours)):
                 area = cv2.contourArea(contours[c])
@@ -127,14 +119,15 @@ def videoCap():
                 if isBox:# or childeren > 0:
                     boxes.append(contours[c])
 
+
             for b in boxes:
                 x, y, w, h = cv2.boundingRect(b)
                 cropped = frame[y:h + y, x:w + x]
-                #GS1decode(cropped)
-                #cv2.imshow('GS1', cropped)
+                #GS1decode(cropped, path)
+                cv2.imshow('cropped' + str(boxCount), cropped)
+                boxCount = boxCount + 1
 
                 cv2.drawContours(frame, [b], -1, (255, 105, 180), 3)
-                # cv2.imshow('cropped' + str(boxes_count), cropped)
 
                 X = x + w / 2
                 # Y = y + h / 2
@@ -147,7 +140,6 @@ def videoCap():
                     print("Right", "dif:", dif)
 
                 cv2.putText(frame, "Medicijndoosje", (x, y), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 105, 180))
-
 
 
             # Edge detection
@@ -173,11 +165,12 @@ def videoCap():
             #break
             cap.release()
             cv2.destroyAllWindows()
-            exit()
+            break
+            #exit()
         # endregion
-        #print(main.frameCount)
-        main.frameCount = main.frameCount + 1
+        #print(frameCount)
+        frameCount = frameCount + 1
 
 
-innit()
+#innit()
 videoCap()
