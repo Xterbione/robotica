@@ -130,7 +130,7 @@
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo()
                     {
-                        FileName = "ros2",
+                        FileName = "/opt/ros/humble/bin/ros2",
                         Arguments = "node list",
                         RedirectStandardOutput = true,
                         UseShellExecute = false,
