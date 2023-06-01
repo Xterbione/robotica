@@ -122,6 +122,31 @@
         }
 
 
+        public static string GetNodeList()
+        {
+
+            if (SystemInfo.IsUnix())
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = "/bin/bash", Arguments = "ros2 topic list", RedirectStandardOutput = true };
+                    Process proc = new Process() { StartInfo = startInfo };
+                    proc.Start();
+                    string output = proc.StandardOutput.ReadToEnd();
+                    return output;
+                }
+                catch (Exception e)
+                {
+                    return "feature is linux only; :" + e.ToString();
+                }
+            }
+            else
+            {
+                return "feature is linux only";
+            }
+        }
+
+
         /// <summary>
         /// gets the runtime of the OS
         /// </summary>

@@ -53,6 +53,15 @@ namespace testAPI.Controllers
             return new JsonResult(Ok(result));
         }
 
+
+        [HttpGet("/Nodes")]
+        public JsonResult GetNodeList()
+        {
+
+            var result = SystemInfo.GetNodeList();
+            return new JsonResult(Ok(result));
+        }
+
         /// <summary>
         /// gets all linux services and wether they are enabled or not
         /// </summary>
