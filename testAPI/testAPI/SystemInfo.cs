@@ -124,27 +124,37 @@
 
         public static string GetNodeList()
         {
-
             if (SystemInfo.IsUnix())
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = "/bin/bash", Arguments = "ros2 node list", RedirectStandardOutput = true };
+                    ProcessStartInfo startInfo = new ProcessStartInfo()
+                    {
+                        FileName = "ros2",
+                        Arguments = "node list",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
                     Process proc = new Process() { StartInfo = startInfo };
                     proc.Start();
                     string output = proc.StandardOutput.ReadToEnd();
+                    proc.WaitForExit();
+
                     return output;
                 }
                 catch (Exception e)
                 {
-                    return "feature is linux only; :" + e.ToString();
+                    return "Failed to execute command: " + e.ToString();
                 }
             }
             else
             {
-                return "feature is linux only";
+                return "This feature is only available on Unix-like systems.";
             }
         }
+
 
 
         /// <summary>
