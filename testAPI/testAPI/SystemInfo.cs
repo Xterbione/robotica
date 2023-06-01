@@ -129,7 +129,7 @@
             {
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = "/bin/bash", Arguments = "ros2 topic list", RedirectStandardOutput = true };
+                    ProcessStartInfo startInfo = new ProcessStartInfo() { FileName = "/bin/bash", Arguments = "ros2 node list", RedirectStandardOutput = true };
                     Process proc = new Process() { StartInfo = startInfo };
                     proc.Start();
                     string output = proc.StandardOutput.ReadToEnd();
