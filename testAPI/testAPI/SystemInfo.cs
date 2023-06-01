@@ -81,13 +81,13 @@
             data.CpuCores = GetCpuCores();
             data.CpuUsage = GetCpuUsage();
             data.TotalDisk = (MemoryMetrics.GetTotalDiskSpace() / 1024 / 1024);
-            data.DiskFree = MemoryMetrics.GetAvailableDiskSpace() / 1024 / 1024;
+            data.DiskFree = (MemoryMetrics.GetAvailableDiskSpace() / 1024 / 1024);
             data.ObjectDetection = false;
             data.TextToSpeech = false;
             data.RuntimeMinutes = SystemInfo.GetRuntimeMinutes();
             data.ServiceStatus = "";
-            data.DiskInput = SystemInfo.GetDiskIO()[0];
-            data.DiskOutput = SystemInfo.GetDiskIO()[1];
+            data.DiskInput = 0;
+            data.DiskOutput = 0;
             return data;
         }
 
