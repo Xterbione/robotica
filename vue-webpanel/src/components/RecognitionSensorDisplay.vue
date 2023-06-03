@@ -1,98 +1,96 @@
 <template>
-<div>
-    <h3>Object recognition and Sensor information</h3>
-    <div class="align-items-center">
-       <!-- <img v-if="this.streamlink != null" style="height: 300px; width: 400px;" :key="this.streamlink" :src="`${this.streamlink}?${Date.now()}`" />
+    <div>
+        <h3>Object recognition and Sensor information</h3>
+        <div class="align-items-center">
+            <!-- <img v-if="this.streamlink != null" style="height: 300px; width: 400px;" :key="this.streamlink" :src="`${this.streamlink}?${Date.now()}`" />
        -->
-    </div>
-    <table class="table table-dark">
-        <thead>
+        </div>
+        <table class="table table-dark">
             <tr>
-                <th scope="col">Sensor</th>
-                <th scope="col">Value</th>
-            </tr>
-        </thead>
-        <tbody v-if="this.info != null" :key="this.info">
-            <tr>
-                <th scope="row">Currently detected object:</th>
-                <td>{{this.info.data.value.currentObject}}</td>
-            </tr>
-            <tr>
-                <th scope="row">Detected QR Value:</th>
-                <td>{{this.info.data.value.qrValue}}</td>
+                <th scope="col">QR reader Value</th>
+                <td>{{ this.retrievedData.gs1 }}</td>
             </tr>
             <tr>
                 <th scope="row">weight:</th>
-                <td>{{this.info.data.value.weight}} in grams</td>
+                <td>{{ this.retrievedData.weight }} in grams</td>
             </tr>
             <tr>
-                <th scope="row">Temperature:</th>
-                <td>{{this.info.data.value.temperature}} Celcius</td>
+                <th scope="row">amplitude lowband:</th>
+                <td>{{ this.retrievedData.lowband }}</td>
             </tr>
             <tr>
-                <th scope="row">frequentie categorie:</th>
-                <td>{{this.info.data.value.category}}</td>
+                <th scope="row">amplitude midband:</th>
+                <td>{{ this.retrievedData.midband }}</td>
             </tr>
             <tr>
-                <th scope="row">huidige geluidsfrequentie:</th>
-                <td>{{ this.info.data.value.frequentie }} Hz</td>
+                <th scope="row">amplitude highband:</th>
+                <td>{{ this.retrievedData.highband }}</td>
             </tr>
-        </tbody>
-    </table>
-</div>
+            <tr>
+                <th scope="row">battery percentage:</th>
+                <td>{{ Math.round(((this.retrievedData.batteryvoltage-90)/30)*100,2) }}%</td>
+            </tr>
+            <tr>
+                <th scope="row">battery voltage:</th>
+                <td> {{(this.retrievedData.batteryvoltage/10) }} Volt</td>
+            </tr>
+            
+        </table>
+    </div>
 </template>
 
 <script>
-import axios from 'axios';
+import * as ROSLIB from 'roslib'
 import config from '/src/config.js';
 
 export default {
     name: 'RecognitionSensorDisplay',
     components: {},
+         /*using data() for reactive properties within the code. 
+    vue will track the changes and update the DOM when data changes
+    in this case i do so because i'd like the chart to have its data available on render. otherwise i could have technically used props
+    in this case we don't need a prop because the component handles its own requists
+    */
     data() {
         return {
-            info: null,
-            streamlink:  config.API_URL+"/webcamframe",
-        }
+            retrievedData: {},
+        };
     },
+    //set up websocket for dynamic data display
     mounted() {
-        this.getData();
-        setInterval(() => {
+        try {
+            const ros = new ROSLIB.Ros({
+                url: config.WS_URL,
+            });
 
-            this.getData();
+            const listener = new ROSLIB.Topic({
+                ros,
+                name: '/RandomData',
+                messageType: 'topics_services/msg/RandomData',
+            });
+            //listener event defenition
+            listener.subscribe((message) => {
+                this.retrievedData = message;
+            });
 
-        }, 3000);
-        setInterval(() => {
+            ros.on('connection', () => {
+                console.log('Connected to Rosbridge server');
+            });
 
-            this.updateframe();
+            ros.on('error', (error) => {
+                console.error('Error connecting to Rosbridge server:', error);
+            });
 
-        }, 3000);
-    },
-    beforeUnmount() {
-        clearInterval(this.interval)
-    },
-    methods: {
-        handleScroll(event) {
-            event.preventDefault();
-        },
-        updateframe() {
-            this.streamlink = config.API_URL+"/webcamframe"
-        },
-        getData() {
-            axios
-                .get(config.API_URL+'/getobjectsensor')
-                .then(response => {
-                    this.info = response;
+            ros.on('close', () => {
+                console.log('Connection to Rosbridge server closed');
+            });
 
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        },
-    },
+            ros.connect(); // Connect to Rosbridge server
+        } catch (error) {
+            console.error('An error occurred while connecting to Rosbridge server:', error);
+        }
+    }
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

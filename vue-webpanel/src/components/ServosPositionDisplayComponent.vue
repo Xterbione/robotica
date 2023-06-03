@@ -1,74 +1,49 @@
 <template>
-<div class="row m-0 p-0 justify-content-around text-center" v-if="this.info">
-    <div v-for="(item, index) in this.info.data.value"  :key="index" class="card col-4 p-1 text-center row align-items-center">
-        <RadialProgressBarComponent :completedSteps="item.data[0]" />
-        <p>{{item.label}}</p>
-        <p>{{item.data[0]}}°</p>
-        
+    <div class="row m-0 p-0 justify-content-around text-center" v-if="info">
+      <div v-for="(item, index) in info" :key="index" class="card col-4 p-1 text-center row align-items-center">
+        <RadialProgressBarComponent :completedSteps="item/1025*300" />
+        <p>{{ `cur_pos ${index + 1}` }}</p>
+        <!--converting the numeric value to degree-->
+        <p>{{ Math.round(item/1025*300) }}°</p>
+      </div>
     </div>
-</div>
-</template>
-
-<script>
-import axios from 'axios'
-import RadialProgressBarComponent from './RadialProgressBarComponent.vue';
-import config from '@/config';
-export default {
+  </template>
+  
+  <script>
+  import RadialProgressBarComponent from './RadialProgressBarComponent.vue';
+  
+  export default {
     name: 'ServoSetrengthDisplayComponent',
     components: {
-        RadialProgressBarComponent
+      RadialProgressBarComponent
     },
-    data() {
-        return {
-            chartData: {
-                labels: ['cpu usage in %'],
-                datasets: [{
-                    data: [100]
-                }]
-            },
-            chartOptions: {
-                responsive: true,
-                scales: {
-                    y: {
-                        min: 0,
-                        max: 100,
-                    }
-                }
-            },
-            info: null,
+    //using props to pass data from parent to child 
+    props: {
+      retrievedData: {
+        type: Object,
+        required: true
+      }
+    },
+    /* using computed to calculate the data for the chart
+    we use computed so that the chart is updated when the data changes
+    */
+    computed: {
+      info() {
+        if (!this.retrievedData) {
+          return null;
         }
-    },
-    mounted() {
-        this.getData();
-        setInterval(() => {
-
-            this.getData();
-
-        }, 300);
-    },
-    beforeUnmount() {
-        clearInterval(this.interval)
-    },
-    methods: {
-        handleScroll(event) {
-            event.preventDefault();
-        },
-        getData() {
-            axios
-                .get(config.API_URL + '/getservopos')
-                .then(response => {
-                    this.info = response;
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        },
-    },
-}
-</script>
-
-<style scoped>
-.spacer {
+        //filtering the data to only get the servo positions
+        return Object.keys(this.retrievedData)
+          .filter(key => key.startsWith('cur_pos'))
+          .map(key => this.retrievedData[key]);
+      }
+    }
+  }
+  </script>
+  
+  <style scoped>
+  .spacer {
     height: 90px;
-}
-</style>
+  }
+  </style>
+  

@@ -8,55 +8,38 @@
             </div>
         </div>
         <img class="p-0 m-0" style="max-height: 200px; object-fit:cover;" src="https://i.pinimg.com/originals/47/1a/f4/471af46519ed5bea2b0002e8c034b51b.jpg" />
-        
         <div class="card col-12 mt-1 w-100">
-            <HardwareDisplayComponent  />
+            <HardwareDisplayComponent />
         </div>
         <div class="card text-center col-12 mt-1 w-100">
-            <RecognitionSensorDisplay/>
+            <RecognitionSensorDisplay />
         </div>
 
         <div class="card text-center col-12 mt-1 w-100">
-            <h3>battery voltage levels</h3>
+            <h3>Servos voltage levels</h3>
         </div>
         <div style="max-height: 200px;" class="col-12 card p-1 mt-1">
-            <LineChartComponent />
+            <LineChartServosComponentVue />
         </div>
-        <div class="card text-center col-12 mt-1 w-100">
-          <h3>Servos voltage levels</h3>
-      </div>
-      <div style="max-height: 200px;" class="col-12 card p-1 mt-1">
-          <LineChartServosComponentVue :retrievedData="retrievedData"/>
-      </div>
         <div class="col-12 p-1 card mt-1 mb-1">
-            <ServosVoltageComponent :retrievedData="retrievedData"/>
+            <ServosVoltageComponent />
         </div>
         <div class="card col-12 mt-1 p-1">
-            <ServoStrengthDisplayComponent :retrievedData="retrievedData"/>
+            <ServoStrengthDisplayComponent />
         </div>
         <div class="card text-center col-12 mt-1 w-100">
             <h3>Servos positioning</h3>
         </div>
-        <ServosPositionDisplayComponentVue :retrievedData="retrievedData"/>
+        <ServosPositionDisplayComponentVue />
         <div class="card col-12 mt-1 p-1">
             <ServiceInfoComponent />
         </div>
-        <div class="card col-12 mt-1 p-1"> 
-            <ThreeJSComponent v-if="false" :retrievedData="retrievedData"/>
-        </div>
-        <div class="card col-12 mt-1 w-100">
-          <TestBridgeComponent />
-      </div>
     </div>
 
 </div>
 </template>
 
 <script>
-import LineChartComponent from './components/LineChartComponent.vue';
-import config from '/src/config.js';
-import * as ROSLIB from 'roslib';
-import ThreeJSComponent from './components/ThreeJSComponent.vue';
 import RecognitionSensorDisplay from './components/RecognitionSensorDisplay.vue';
 import HardwareDisplayComponent from './components/HardwareDisplayComponent.vue';
 import LineChartServosComponentVue from './components/LineChartServosComponent.vue';
@@ -64,7 +47,7 @@ import ServiceInfoComponent from './components/ServiceInfoComponent.vue';
 import ServoStrengthDisplayComponent from './components/ServoStrengthDisplayComponent.vue';
 import ServosVoltageComponent from './components/ServosVoltageComponent.vue';
 import ServosPositionDisplayComponentVue from './components/ServosPositionDisplayComponent.vue';
-import TestBridgeComponent from './components/TestBridgeComponent.vue';
+
 
 export default {
     name: 'App',
@@ -75,49 +58,8 @@ export default {
         ServoStrengthDisplayComponent,
         ServosVoltageComponent,
         ServosPositionDisplayComponentVue,
-        RecognitionSensorDisplay,
-        ThreeJSComponent,
-        LineChartComponent,
-        TestBridgeComponent,
+        RecognitionSensorDisplay
     },
-    data() {
-    return {
-      retrievedData: {},
-    };
-  },
-  created() {
-    try {
-      const ros = new ROSLIB.Ros({
-        url: config.WS_URL,
-      });
-
-      const listener = new ROSLIB.Topic({
-        ros,
-        name: '/Telemetric',
-        messageType: 'topics_services/msg/Telemetric',
-      });
-
-      listener.subscribe((message) => {
-        this.retrievedData = message;
-      });
-
-      ros.on('connection', () => {
-        console.log('Connected to Rosbridge server');
-      });
-
-      ros.on('error', (error) => {
-        console.error('Error connecting to Rosbridge server:', error);
-      });
-
-      ros.on('close', () => {
-        console.log('Connection to Rosbridge server closed');
-      });
-
-      ros.connect(); // Connect to Rosbridge server
-    } catch (error) {
-      console.error('An error occurred while connecting to Rosbridge server:', error);
-    }
-  }
 }
 </script>
 

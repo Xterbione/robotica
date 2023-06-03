@@ -12,18 +12,7 @@
   </template>
   
   <script>
-  /*
-  using props so the parent component can pass data down to the child component
-  */
-
-  /*
-  Computed properties to allow for dynamic values to be calculated and returned.
-  Computed properties are cached, meaning they only recompute when their value/dependencies change.
-  */
-
-
   export default {
-    name: "GaugeComponent",
     props: ["percentage", "symbol"],
     computed: {
       rotate() {
@@ -33,10 +22,7 @@
     },
   };
   </script>
-
-
   <style scoped>
-
   .container-local {
     width: 200px;
     height: 100px;

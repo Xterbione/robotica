@@ -1,5 +1,8 @@
 {
-    "API_URL": "http://192.168.74.130:5000",
+    "API_URL": " http://141.252.29.19:5000",
+    "WS_URL": "ws://141.252.29.19:9090",
+    "WS_URL_jetson": "ws://141.252.29.19:9090",
     "ENABLE_FEATURE_X": true,
     "LOG_LEVEL": "debug"
   }
+  
