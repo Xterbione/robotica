@@ -37,17 +37,22 @@
             double systemUsage = 0;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
+                // Get the total CPU time used by the current process.
                 var cpuCounter = Process.GetCurrentProcess().TotalProcessorTime;
+                // Use ManagementObjectSearcher to query performance counters for CPU usage information on Windows.
                 var systemCounter = new ManagementObjectSearcher("SELECT PercentProcessorTime FROM Win32_PerfFormattedData_PerfOS_Processor WHERE Name='_Total'").Get().GetEnumerator();
                 while (systemCounter.MoveNext())
                 {
+                    // Convert the PercentProcessorTime value to double.
                     systemUsage = Convert.ToDouble((UInt64)(systemCounter.Current["PercentProcessorTime"]));
-                    break; // get the first result
+                    break; // Get the first result.
                 }
+                // Calculate and return the CPU usage percentage.
                 return Math.Round(systemUsage / Environment.ProcessorCount / cpuCounter.TotalSeconds * 100, 2);
             }
             else if (SystemInfo.IsUnix())
             {
+                // For Unix-based systems, use the 'top' command to retrieve CPU usage information.
                 var psi = new ProcessStartInfo
                 {
                     FileName = "/bin/bash",
@@ -59,14 +64,18 @@
                 var process = Process.Start(psi);
                 process.WaitForExit();
                 var output = process.StandardOutput.ReadToEnd();
+                // Parse the CPU usage value from the output and convert it to double.
                 var cpuUsage = double.Parse(output.Trim());
-                return Math.Round(cpuUsage/10);
+                // Round the CPU usage value to one decimal place and return it.
+                return Math.Round(cpuUsage / 10);
             }
             else
             {
+                // Throw a PlatformNotSupportedException if the current platform is not supported.
                 throw new PlatformNotSupportedException($"The current platform '{RuntimeInformation.OSDescription}' is not supported.");
             }
         }
+
 
         /// <summary>
         /// returns system info and combines several functions of several classes to return the full data object
@@ -223,19 +232,28 @@
 
                 foreach (var line in lines)
                 {
+                    // Check if the line starts with "Total DISK READ:"
                     if (line.StartsWith("Total DISK READ:"))
                     {
+                        // Split the line by "B/s" to extract the disk read value.
                         var parts = line.Split(new[] { "B/s" }, StringSplitOptions.RemoveEmptyEntries);
+                        // Split the substring after ":" to get the disk read value and remove any leading or trailing whitespace.
                         var diskReadValue = parts[0].Split(':')[1].Trim();
+                        // Parse the disk read value and store it in the first element of the diskIO array.
                         diskIO[0] = double.Parse(diskReadValue);
                     }
+                    // Check if the line starts with "Total DISK WRITE:"
                     else if (line.StartsWith("Total DISK WRITE:"))
                     {
+                        // Split the line by "B/s" to extract the disk write value.
                         var parts = line.Split(new[] { "B/s" }, StringSplitOptions.RemoveEmptyEntries);
+                        // Split the substring after ":" to get the disk write value and remove any leading or trailing whitespace.
                         var diskWriteValue = parts[0].Split(':')[1].Trim();
+                        // Parse the disk write value and store it in the second element of the diskIO array.
                         diskIO[1] = double.Parse(diskWriteValue);
                     }
                 }
+
             }
 
             return diskIO;
